@@ -5,8 +5,11 @@ import { UserIdNotExistsError } from "src/users/error/id-not-exists";
 import { AuthGuard } from "../auth/auth-guard";
 import { Roles } from "../auth/roles";
 import { Role } from "../../config/enum";
+import { ApiBearerAuth, ApiParam, ApiTags } from "@nestjs/swagger";
 
 
+@ApiTags('users')
+@ApiBearerAuth()
 @Controller()
 @UseGuards(AuthGuard)
 @Roles(Role.Admin, Role.User)
@@ -16,7 +19,13 @@ export class DeleteUserController {
         private deleteUserUseCase: DeleteUserUseCase
     ) {}
 
-    @Delete(":id")
+    @Delete("delete/user/:id")
+    @ApiParam({
+        name: "id",
+        required: true,
+        description: "O ID do usuário que será deletado.",
+        example: "12345",
+    })
     async handle(@Param('id') id, @Res() res: Response) {
 
         if(!id) {

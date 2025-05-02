@@ -4,9 +4,8 @@ import { z } from "zod";
 import { ZodValidationPipe } from "../pipes/zod-validation-pipe";
 import { EmailAlreadyExistsError } from "src/users/error/email-already-exists";
 import { Response } from "express";
-import { AuthGuard } from "../auth/auth-guard";
-import { Roles } from "../auth/roles";
-import { Role } from "../../config/enum";
+import { ApiBody, ApiResponse, ApiTags } from "@nestjs/swagger";
+import {createZodDto} from 'nestjs-zod'
 
 export const zodSchema = z.object({
     name: z.string().min(1).max(255),
@@ -17,9 +16,10 @@ export const zodSchema = z.object({
     message: "Passwords don't match",
 })
 
-export type CreateUserRequest  = z.infer<typeof zodSchema>
+export class CreateUserDto extends createZodDto(zodSchema) {}
 
 
+@ApiTags('users')
 @Controller()
 @UsePipes(new ZodValidationPipe(zodSchema))
 export class CreateUserController {
@@ -28,8 +28,21 @@ export class CreateUserController {
         private createUserUseCase: CreateUserUseCase
     ) {}
 
-    @Post("/users")
-    async handle(@Body() body: CreateUserRequest, @Res() res: Response) {
+    @Post("create/users")
+    @ApiResponse({ status: 201, description: "User created successfully." })
+    @ApiResponse({ status: 409, description: "Validation error." })
+    @ApiBody({
+        description: "Payload for creating a user",
+        schema: {
+            example: {
+                name: "John Doe",
+                email: "johndoe@gmail.com",
+                password: "securePassword123",
+                confirmPassword: "securePassword123",
+            },
+        },
+    })
+    async handle(@Body() body: CreateUserDto, @Res() res: Response) {
 
         const {email, password, name} = body
         try {
@@ -44,12 +57,12 @@ export class CreateUserController {
                 })
             } 
             return res.status(201).json({
-                message: 'success'
+                message: 'user created',
+                user
             })
         }
         catch(err) {
             throw err
         }
     }
-
 }

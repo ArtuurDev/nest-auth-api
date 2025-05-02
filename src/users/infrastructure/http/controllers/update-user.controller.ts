@@ -7,7 +7,8 @@ import { UserIdNotExistsError } from "src/users/error/id-not-exists";
 import { AuthGuard } from "../auth/auth-guard";
 import { Role } from "../../config/enum";
 import { Roles } from "../auth/roles";
-
+import { ApiBearerAuth, ApiBody, ApiTags } from "@nestjs/swagger";
+import {createZodDto} from 'nestjs-zod'
 
 export const zodSchema = z.object({
   name: z.string().min(1).max(255),
@@ -18,9 +19,11 @@ export const zodSchema = z.object({
   path: ['confirmPassword']
 });
 
-export type CreateUserRequest  = z.infer<typeof zodSchema>
+export class CreateUserDto extends createZodDto(zodSchema) {}
 
 
+@ApiTags('users')
+@ApiBearerAuth()
 @Controller()
 @UseGuards(AuthGuard)
 @Roles(Role.Admin, Role.User)
@@ -30,8 +33,19 @@ export class UpdateUserController {
         private updateUser: UpdateUserUseCase
     ) {}
 
-    @Put("/:id")
-    async handle(@Body(new ZodValidationPipe(zodSchema)) body: CreateUserRequest, 
+    @Put("update/user/:id")
+    @ApiBody({
+            description: "Payload for update a user",
+            schema: {
+                example: {
+                    name: "John Doe",
+                    email: "johndoe@gmail.com",
+                    password: "securePassword123",
+                    confirmPassword: "securePassword123",
+                },
+            },
+        })
+    async handle(@Body(new ZodValidationPipe(zodSchema)) body: CreateUserDto, 
     @Param('id') id: string, 
     @Res() res: Response,
     @Req() req) {
