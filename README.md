@@ -49,13 +49,57 @@ Crie um arquivo .env na raiz do projeto com as seguintes variáveis:
 DATABASE_URL=postgresql://<user>:<password>@localhost:5432/<database>
 JWT_SECRET=seu-segredo-jwt
 PORT=3000
+
+4. Suba o Banco de Dados com Docker Para facilitar a configuração do banco de dados, utilize Docker. Execute o comando abaixo para subir o container com PostgreSQL:
 docker-compose up -d
 
-5. Execute as Migrações do Prisma
+Execute as Migrações do Prisma
 Para configurar o banco de dados e as tabelas necessárias, execute as migrações do Prisma:
 npx prisma migrate dev
+
+Inicie a Aplicação
+Agora, você pode iniciar a aplicação:
+npm run dev
 
 📚 Documentação Swagger
 A API está documentada com Swagger para fácil visualização e interação. Para acessar a documentação interativa, inicie a aplicação e acesse a seguinte URL:
 
 URL: http://localhost:3000/api/docs
+
+Estrutura do projeto:
+src/
+├── [app.module.ts](http://_vscodecontentref_/2)
+├── [main.ts](http://_vscodecontentref_/3)
+├── users/
+│   ├── application/
+│   │   ├── use-cases/
+│   │   ├── repositories/
+│   ├── infrastructure/
+│   │   ├── http/
+│   │   │   ├── controllers/
+│   │   │   ├── auth/
+│   │   ├── config/
+│   │   ├── database/
+│   ├── error/
+│   ├── prisma/
+
+Controle de Acesso
+RBAC (Role-Based Access Control)
+Funções Disponíveis:
+
+Admin: Acesso total a todos os recursos.
+User: Acesso limitado aos próprios recursos.
+Implementação:
+
+Decorador @Roles define as permissões de acesso.
+Exemplo:
+@Roles(Role.Admin)
+
+ABAC (Attribute-Based Access Control)
+Descrição:
+Usuários podem acessar apenas seus próprios dados, a menos que sejam administradores.
+Implementação:
+Verificação no AuthGuard:
+if (id !== payload.sub) {
+  throw new ForbiddenException('Não tem permissão para acessar este recurso');
+}
