@@ -33,28 +33,7 @@ Este é um projeto de API de autenticação e gerenciamento de usuários desenvo
 - **RBAC (Role-Based Access Control)**: Controle de acesso baseado em funções como `Admin` e `User`.
 - **ABAC (Attribute-Based Access Control)**: Controle de acesso baseado em atributos, onde os usuários só podem acessar dados relativos a eles mesmos.
 
-Controle de Acesso
-RBAC (Role-Based Access Control)
-Funções Disponíveis:
-
-Admin: Acesso total a todos os recursos.
-User: Acesso limitado aos próprios recursos.
-Implementação:
-
-Decorador @Roles define as permissões de acesso.
-Exemplo:
-@Roles(Role.Admin)
-
-ABAC (Attribute-Based Access Control)
-Descrição:
-Usuários podem acessar apenas seus próprios dados, a menos que sejam administradores.
-Implementação:
-Verificação no AuthGuard:
-if (id !== payload.sub) {
-  throw new ForbiddenException('Não tem permissão para acessar este recurso');
-}
 ---
-
 
 
 ## 🛠️ Configuração do Ambiente
@@ -104,4 +83,25 @@ src/
 │   │   ├── database/
 │   ├── error/
 │   ├── prisma/
+
+Controle de Acesso
+RBAC (Role-Based Access Control)
+Funções Disponíveis:
+
+Admin: Acesso total a todos os recursos.
+User: Acesso limitado aos próprios recursos.
+Implementação:
+
+Decorador @Roles define as permissões de acesso.
+Exemplo:
+@Roles(Role.Admin)
+
+ABAC (Attribute-Based Access Control)
+Descrição:
+Usuários podem acessar apenas seus próprios dados, a menos que sejam administradores.
+Implementação:
+Verificação no AuthGuard:
+if (id !== payload.sub) {
+  throw new ForbiddenException('Não tem permissão para acessar este recurso');
+}
 
