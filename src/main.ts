@@ -8,7 +8,15 @@ async function bootstrap() {
   const configService = app.get(ConfigService)
 
   const config = new DocumentBuilder()
-    .setTitle('Documentação com Swagger')
+    .setTitle('Bem-vindo à documentação da API de autenticação! Aqui você pode testar os endpoints da API.\n\n' +
+      '**Informações importantes:**\n' +
+      '- Já existe um usuário administrador cadastrado. Use o endpoint `/login` para autenticar-se como administrador.\n' +
+      '- Você pode criar um usuário comum utilizando o endpoint `/create/users` e, em seguida, fazer login com ele.\n\n' +
+      '**Passos para usar o Swagger:**\n' +
+      '1. Realize o login utilizando o endpoint `/login` para obter um token JWT.\n' +
+      '2. Clique no botão **Authorize** no canto superior direito da interface do Swagger.\n' +
+      '3. Insira o token JWT no formato: `Bearer <seu-token>`.\n' +
+      '4. Após autorizado, você poderá testar as rotas protegidas.')
     .setVersion('1.0')
     .addTag('users')
     .addBearerAuth()
