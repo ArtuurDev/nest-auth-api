@@ -35,7 +35,7 @@ export class LoginUserController {
                     description: "Exemplo de login como administrador",
                     example: {
                         email: "emaildoadmistrador@gmail.com",
-                        password: "admin12345",
+                        password: "securePassword123",
                     },
                 },
                 {
